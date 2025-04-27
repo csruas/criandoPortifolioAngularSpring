@@ -19,8 +19,7 @@ export class LoginComponent {
   constructor() { }
   login() {
     if (this.usuario === 'admin' && this.senha === 'admin') {
-      alert('Login realizado com sucesso!');
-      this.router.navigate(['admin/carros']);
+        this.router.navigate(['admin/carros']);
 
     } else {
       alert('Usuario ou senha estão incorreto');
