@@ -1,19 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { Carro } from '../../../models/carro';
 import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
+import { MdbModalModule, MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { CarrosdetailsComponent } from "../carrosdetails/carrosdetails.component";
 
 
 @Component({
   selector: 'app-carroslist',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, MdbModalModule, CarrosdetailsComponent],
   templateUrl: './carroslist.component.html',
   styleUrl: './carroslist.component.scss'
 })
 export class CarroslistComponent {
 
   lista: Carro[] = [];
+  carroEdit: Carro = new Carro(0, '');
+  carro: Carro = new Carro(0, '');
+
+  //este codigo esta abrindo a modal
+  modalService = inject(MdbModalService);
+  @ViewChild("modalCarroDetalhe") modalCarroDetalhe!: TemplateRef<any>;
+  modelRef!: MdbModalRef<any>;
+
 
   constructor() {
     this.lista.push(new Carro(1, 'Fusca'));
@@ -61,7 +71,29 @@ export class CarroslistComponent {
   }
 
   novo(){
+    this.carro = new Carro(0, '');
     this.lista.push(new Carro(this.lista.length + 1, 'Novo Carro'));
+  }
+
+  new(){
+    this.carroEdit = new Carro(0, '');
+    this.modelRef = this.modalService.open(this.modalCarroDetalhe);
+  }
+
+  editar(carro: Carro){
+    this.carroEdit = Object.assign({}, carro); // fazendo uma copia do carro para alterar somente quando confirmar
+    this.modelRef = this.modalService.open(this.modalCarroDetalhe);
+  }
+
+  retornoDetalhe(carro: Carro){
+    if(carro.id > 0){
+      let indice = this.lista.findIndex(x => {return x.id == carro.id});
+      this.lista[indice] = carro;
+    }else{
+      carro.id = this.lista.length + 1;
+      this.lista.push(carro);
+    }
+    this.modelRef.close();
   }
 
 
