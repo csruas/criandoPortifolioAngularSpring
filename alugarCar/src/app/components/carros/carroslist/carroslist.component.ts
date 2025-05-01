@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { MdbModalModule, MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { CarrosdetailsComponent } from "../carrosdetails/carrosdetails.component";
+import { CarroService } from '../../../services/carro.service';
+import { Marcas } from '../../../models/marcas';
 
 
 @Component({
@@ -16,20 +18,18 @@ import { CarrosdetailsComponent } from "../carrosdetails/carrosdetails.component
 export class CarroslistComponent {
 
   lista: Carro[] = [];
-  carroEdit: Carro = new Carro(0, '');
-  carro: Carro = new Carro(0, '');
+  carroEdit: Carro = new Carro(0, '', new Marcas(0, ''));
+  carro: Carro = new Carro(0, '', new Marcas(0, ''));
 
   //este codigo esta abrindo a modal
   modalService = inject(MdbModalService);
   @ViewChild("modalCarroDetalhe") modalCarroDetalhe!: TemplateRef<any>;
   modelRef!: MdbModalRef<any>;
+  carroService = inject(CarroService);
 
 
   constructor() {
-    this.lista.push(new Carro(1, 'Fusca'));
-    this.lista.push(new Carro(2, 'Civic'));
-    this.lista.push(new Carro(3, 'Corolla'));
-    this.lista.push(new Carro(4, 'Palio'));
+    this.findAll();
 
     let carroNovo = history.state.carroNovo;
     let carroEditado = history.state.carroEditado;
@@ -46,6 +46,20 @@ export class CarroslistComponent {
     }
 
   }
+  findAll(){
+    this.carroService.findAll().subscribe({
+      next: lista =>{
+        this.lista = lista;
+      },
+      error(error){
+        Swal.fire({
+          title: "Erro ao Listar um carro!",
+          icon: 'error',
+          confirmButtonText: "Ok",
+        })
+      }
+    });
+  }
 
 
   excluir(carro: Carro) {
@@ -59,24 +73,38 @@ export class CarroslistComponent {
             cancelButtonText: "Não",
           }).then((result) => {
             if (result.isConfirmed) {
-              let indice = this.lista.findIndex(x => {return x.id == carro.id});
-              this.lista.splice(indice, 1);
+
+              this.carroService.delete(carro.id).subscribe({
+                next: mensagem =>{
+                  Swal.fire({
+                    title: mensagem,
+                    icon: 'success',
+                    confirmButtonText: "Ok",
+                  })
+                  this.findAll();
+                },
+                error(error){
+                  Swal.fire({
+                    title: "Erro ao excluir o carro!",
+                    icon: 'error',
+                    confirmButtonText: "Ok",
+                  })
+                }
+              });
+
             }
 
-             Swal.fire({
-                    title: 'Deletado com sucesso!',
-                    icon: 'success'
-                  })
+
            });
   }
 
   novo(){
-    this.carro = new Carro(0, '');
-    this.lista.push(new Carro(this.lista.length + 1, 'Novo Carro'));
+    this.carro = new Carro(0, '', null);
+    this.lista.push(new Carro(0, '', null));
   }
 
   new(){
-    this.carroEdit = new Carro(0, '');
+    this.carroEdit = new Carro(0, '', null);
     this.modelRef = this.modalService.open(this.modalCarroDetalhe);
   }
 
@@ -86,13 +114,7 @@ export class CarroslistComponent {
   }
 
   retornoDetalhe(carro: Carro){
-    if(carro.id > 0){
-      let indice = this.lista.findIndex(x => {return x.id == carro.id});
-      this.lista[indice] = carro;
-    }else{
-      carro.id = this.lista.length + 1;
-      this.lista.push(carro);
-    }
+    this.findAll();
     this.modelRef.close();
   }
 

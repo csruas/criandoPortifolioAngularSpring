@@ -17,6 +17,7 @@
                 <tr>
                   <th>ID</th>
                   <th>Nome</th>
+                  <th>Marca do Carro</th>
                   <th>Açoes</th>
                 </tr>
               </thead>
@@ -25,6 +26,11 @@
                 <tr >
                   <td>{{carro.id}}</td>
                   <td>{{carro.nome}}</td>
+                  @if(carro.marca){
+                    <td>{{carro.marca.nome}}</td>                    
+                  }@else{
+                    <td>Marca não informada</td>
+                  }
                   <td class="direita">
                     <button type="button" class="btn btn-primary" mdbRipple (click)="editar(carro)">Editar</button>
                     <button type="button" class="btn btn-danger" mdbRipple (click)="excluir(carro)">Excluir</button>

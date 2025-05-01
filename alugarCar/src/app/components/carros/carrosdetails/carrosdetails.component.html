@@ -12,6 +12,17 @@
                     <label mdbLabel class="form-label" for="form1">Nome</label>
                   </mdb-form-control>
                   <br>
+
+                  <div>
+                    @if(carro.marca == null) {
+                      <button type="button" class="btn btn-primary" mdbRipple (click)="buscarmarcas()">Buscar Marca</button>
+                      
+                    }@else{
+                       <span class="text-primary">Marca: {{carro.marca.nome}}</span> 
+                      <button type="button" class="btn btn-warning" mdbRipple (click)="buscarmarcas()">Trocar marca</button>
+                    }
+                  </div>
+                  <br>
                   <button type="button" class="btn btn-primary" mdbRipple (click)="save()">Salvar</button>
                 </div>
       </div>
@@ -20,6 +31,23 @@
   </div>
 
 </div>
+
+<ng-template #modalMarcas>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Novo</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modelRef.close()"
+    ></button>
+  </div>
+  <div class="modal-body">
+
+    <app-marcaslist [esconderBotoes]="true" (retorno)="retornoMarca($event)"></app-marcaslist>
+  </div>
+
+</ng-template>
 
 
 
