@@ -28,19 +28,19 @@ export class MarcaslistComponent {
 
  constructor() {
     this.findAll();
-  
+
     let marcaNovo = history.state.marcaNovo;
     let marcaEditado = history.state.marcaEditado;
-  
+
     if(marcaNovo != null){
       this.lista.push(marcaNovo);
     }
-  
+
     if(marcaEditado != null){
         let indice = this.lista.findIndex(x => {return x.id == marcaEditado.id});
         this.lista[indice] = marcaEditado;
     }
-  
+
     }
 
      findAll(){
@@ -57,14 +57,14 @@ export class MarcaslistComponent {
           }
         });
       }
- 
+
 
 
   new(){
     this.marca = new Marcas(0, '');
     this.marcaEdit = new Marcas(0, '');
     this.modelRef = this.modalService.open(this.modalMarcaDetalhe, {data: {marca: this.marca}});
-    
+
   }
 
   editar(marca: Marcas){
@@ -73,7 +73,7 @@ export class MarcaslistComponent {
   }
 
   excluir(marca: any){
-    
+
     Swal.fire({
       text: 'Deseja realmente excluir a marca?',
       icon: 'warning',
@@ -110,9 +110,7 @@ export class MarcaslistComponent {
     }
 
     select(marca: Marcas){
-      //this.marca = marca;
       this.retorno.emit(marca);
-      //this.modelRef.close();
     }
 
 }

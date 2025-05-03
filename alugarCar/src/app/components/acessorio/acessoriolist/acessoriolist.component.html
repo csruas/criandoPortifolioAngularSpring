@@ -1,0 +1,67 @@
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="card">
+          <div class="card-bord">
+            <h3>Listagem de Acessorios</h3>
+            <div class="direita">
+             <!--
+               <button type="button" class="btn btn-primary" mdbRipple routerLink="/admin/carros/new">Novo</button>
+             -->
+               <button type="button" class="btn btn-primary" mdbRipple (click)="new()">Novo</button>
+            </div>
+            <br>
+            <table border="1" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Acessorio</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+              @for (acessorio of lista; track $index) {
+                <tr >
+                  <td>{{acessorio.id}}</td>
+                  <td>{{acessorio.nome}}</td>
+                  <td class="direita">
+                    @if (esconderBotoes) {
+                      <button type="button" class="btn btn-primary" mdbRipple (click)="select(acessorio)">Selecionar</button>
+                    }@else {
+                      <button type="button" class="btn btn-primary" mdbRipple (click)="editar(acessorio)">Editar</button>
+                      <button type="button" class="btn btn-danger" mdbRipple (click)="excluir(acessorio)">Excluir</button>
+                    }
+                  </td>
+                </tr>
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalAcessorioDetalhe>
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Cadastro</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modelRef.close()"
+    ></button>
+  </div>
+  <div class="modal-body">
+
+    <app-acessoriodetails [acessorio]="acessorioEdit" (retorno)="retornoDetalhe($event)"></app-acessoriodetails>
+  </div>
+
+</ng-template>
+
+
+
+
+
+

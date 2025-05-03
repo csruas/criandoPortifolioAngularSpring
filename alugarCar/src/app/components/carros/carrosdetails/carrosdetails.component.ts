@@ -8,13 +8,15 @@ import { CarroService } from '../../../services/carro.service';
 import { Marcas } from '../../../models/marcas';
 import { MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { MarcaslistComponent } from '../../marcas/marcaslist/marcaslist.component';
+import { AcessoriolistComponent } from "../../acessorio/acessoriolist/acessoriolist.component";
+import { Acessorio } from '../../../models/acessorio';
 
 
 
 @Component({
   selector: 'app-carrosdetails',
   standalone: true,
-  imports: [MdbFormsModule, FormsModule, MarcaslistComponent],
+  imports: [MdbFormsModule, FormsModule, MarcaslistComponent, AcessoriolistComponent],
   templateUrl: './carrosdetails.component.html',
   styleUrl: './carrosdetails.component.scss'
 })
@@ -30,6 +32,7 @@ carroService = inject(CarroService);
   //este codigo esta abrindo a modal
   modalService = inject(MdbModalService);
   @ViewChild("modalMarcas") modalMarcas!: TemplateRef<any>;
+  @ViewChild("modalAcessorio") modalAcessorio!: TemplateRef<any>;
   modelRef!: MdbModalRef<any>;
 
   constructor() {
@@ -70,6 +73,7 @@ carroService = inject(CarroService);
 
           this.router2.navigate(['admin/carros'], { state: {carroEditado: this.carro } });
           this.retorno.emit(this.carro);
+          console.log(this.carro);
         },
         error(error){
           Swal.fire({
@@ -80,7 +84,7 @@ carroService = inject(CarroService);
         }
       });
 
-    } else {
+    }else {
       this.carroService.save(this.carro).subscribe({
         next: mensagem =>{
           Swal.fire({
@@ -91,6 +95,7 @@ carroService = inject(CarroService);
 
           this.router2.navigate(['admin/carros'], { state: {carroNovo: this.carro } });
           this.retorno.emit(this.carro);
+          console.log(this.carro);
         },
         error(error){
           Swal.fire({
@@ -102,15 +107,36 @@ carroService = inject(CarroService);
       });
     }
   }
-
+  // abrindo a model de marcas
   buscarmarcas(){
     this.modelRef = this.modalService.open(this.modalMarcas, {modalClass: 'modal-lg'});
   }
 
+  // abrindo a model de acessorios
+  buscarAcessorio(){
+    this.modelRef = this.modalService.open(this.modalAcessorio, {modalClass: 'modal-lg'});
+  }
+
+  // retorno da modal de marcas
   retornoMarca(marca: Marcas){
     this.carro.marca = marca;
     this.modelRef.close();
   }
 
+  // retorno da modal de acessorios
+  retornoAcessorio(acessorio: Acessorio){
+    if(this.carro.acessorios == null)
+      this.carro.acessorios = [];
+    //verifica se o acessorio ja existe no carro
+       this.carro.acessorios.push(acessorio);
+       this.modelRef.close();
+
+  }
+
+  desvincularAcessorioCarro(acessorio: Acessorio){
+    let posicao = this.carro.acessorios.findIndex(x => {return x.id == acessorio.id});
+    this.carro.acessorios.splice(posicao, 1);
+
+  }
+
 }
-  
